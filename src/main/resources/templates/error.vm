@@ -1,0 +1,21 @@
+<html>
+    <head>
+        #issueLinkHeader ($action $i18n $webResourceManager $keyboardShortcutManager)
+    </head>
+    <body>
+        <form method="post" id="error" class="aui">
+            <h1>Issue Wizzard - Error</h1>
+            <div class="form-body">#issueLinkErrorMessages ($action)</div>
+            <div class="buttons-container form-footer">
+                <div class="buttons">
+                    <a
+                        accesskey="${cancelAccessKey}"
+                        class="aui-button aui-button-link cancel"
+                        href="${req.contextPath}${action.issuePath}"
+                        title="Cancel">
+                        ${i18n.getText("AUI.form.cancel.link.text")}</a>
+                </div>
+            </div>
+        </form>
+    </body>
+</html>

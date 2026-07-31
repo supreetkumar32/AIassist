@@ -1,0 +1,68 @@
+
+<html>
+$webResourceManager.requireResource("com.atlassian.auiplugin:aui-form-validation")
+$webResourceManager.requireResource("com.bosch.cc.atlassian.aiassistant:ai-assistant-resources-v1")
+<body>
+
+<div id="ai-assistant-wrapper"
+     data-project-key="${action.projectKey}"
+     data-issue-key="${action.issueKey}">
+
+    <!-- ── Header ──────────────────────────────────────────────── -->
+    <div class="ai-header">
+        <div class="ai-header-glow"></div>
+        <div class="ai-header-content">
+            <div class="ai-header-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" fill="white" fill-opacity="0.95"/>
+                    <path d="M19 15L19.8 18.2L23 19L19.8 19.8L19 23L18.2 19.8L15 19L18.2 18.2L19 15Z" fill="white" fill-opacity="0.7"/>
+                    <path d="M5 3L5.5 5L7 5.5L5.5 6L5 8L4.5 6L3 5.5L4.5 5L5 3Z" fill="white" fill-opacity="0.6"/>
+                </svg>
+            </div>
+            <div class="ai-header-text">
+                <div class="ai-header-title">Jira AI Assistant</div>
+                <div class="ai-header-subtitle">Ask anything — create, search, summarize</div>
+            </div>
+            <div class="ai-context-badge" title="Current context">
+                <span class="ai-context-key">${action.issueKey}</span>
+                <span class="ai-context-project">${action.projectKey}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Quick action chips ──────────────────────────────────── -->
+    <div class="ai-chips-bar">
+        <button class="ai-chip" data-prompt="Summarize sprint">🚀 Sprint Summary</button>
+        <button class="ai-chip" data-prompt="List my open issues">📋 My Issues</button>
+        <button class="ai-chip" data-prompt="List all open issues">📂 Open Issues</button>
+        <button class="ai-chip" data-prompt="Create a story for ">📖 Create Story</button>
+        <button class="ai-chip" data-prompt="Create a task for ">✅ Create Task</button>
+        <button class="ai-chip" data-prompt="help">❓ Help</button>
+    </div>
+
+    <!-- ── Chat messages ───────────────────────────────────────── -->
+    <div id="ai-chat-messages">
+        <!-- Welcome message injected by JS on init -->
+    </div>
+
+    <!-- ── Input area ──────────────────────────────────────────── -->
+    <div class="ai-input-bar">
+        <textarea
+            id="ai-user-input"
+            class="ai-textarea"
+            placeholder='Try: "create a story for login page crash"  •  "summarize sprint"  •  "list my issues"'
+            rows="2"
+            autofocus></textarea>
+        <button id="ai-send-btn" class="ai-send-btn" title="Send (Enter)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M22 2L11 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+    </div>
+    <div class="ai-input-hint">Press <kbd>Enter</kbd> to send &nbsp;·&nbsp; <kbd>Shift+Enter</kbd> for new line</div>
+
+</div>
+
+</body>
+</html>

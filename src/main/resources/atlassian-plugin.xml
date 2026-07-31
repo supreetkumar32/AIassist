@@ -1,0 +1,50 @@
+
+<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
+
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${plugin.version}</version>
+        <vendor name="${project.organization.name}"/>
+        <param name="plugin-icon">images/jira_cc_icon.png</param>
+        <param name="plugin-logo">images/jira_cc_icon.png</param>
+    </plugin-info>
+
+    <web-item key="ai-assistant" name="AI Assistant"
+              section="operations-subtasks" weight="201">
+        <label key="✨ AI Assistant"/>
+        <link linkId="aiAssistantActionLink">/secure/AiAssistantAction!default.jspa?issueId=${issueId}</link>
+    </web-item>
+
+    <web-resource key="ai-assistant-resources-v1" name="AI Assistant Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.auiplugin:aui-form-validation</dependency>
+        <resource type="download" name="ai-assistant.css" location="/css/ai-assistant.css"/>
+        <resource type="download" name="ai-assistant.js"  location="/js/ai-assistant.js"/>
+        <context>jira.general</context>
+    </web-resource>
+
+    <webwork1 key="ai-assistant-action" name="AI Assistant Action"
+              class="java.lang.Object" roles-required="use">
+        <description>Jira AI Assistant – natural language Jira operations</description>
+        <actions>
+            <action name="com.bosch.cc.atlassian.aiassistant.actions.AiAssistantAction" alias="AiAssistantAction">
+                <view name="success">/templates/aiassistant/aiassistant.vm</view>
+                <view name="error">/templates/error.vm</view>
+            </action>
+        </actions>
+    </webwork1>
+
+
+    <velocity-allowlist key="velocity-allowlist-ai-assist">
+
+        <!-- ── AiAssistantAction (aiassistant.vm) ── -->
+        <!-- ${action.projectKey} -->
+        <method>com.bosch.cc.atlassian.aiassistant.actions.AiAssistantAction#getProjectKey()</method>
+        <!-- ${action.issueKey} -->
+        <method>com.bosch.cc.atlassian.aiassistant.actions.AiAssistantAction#getIssueKey()</method>
+        <!-- ${action.issueSummary} -->
+        <method>com.bosch.cc.atlassian.aiassistant.actions.AiAssistantAction#getIssueSummary()</method>
+
+    </velocity-allowlist>
+
+</atlassian-plugin>

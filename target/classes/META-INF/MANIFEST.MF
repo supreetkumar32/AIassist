@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Atlassian-Build-Date: 2026-07-31T12:41:32+0530
+Atlassian-Plugin-Key: com.bosch.cc.atlassian.aiassistant
+Bnd-LastModified: 1785481893831
+Build-Jdk: 21.0.10
+Built-By: UUC3KOR
+Bundle-Description: Jira AI Assistant – natural language Jira operatio
+ ns.
+Bundle-ManifestVersion: 2
+Bundle-Name: AI Assist
+Bundle-SymbolicName: com.bosch.xc.adda.atlassian.jira.ai-assist
+Bundle-Vendor: Robert Bosch GmbH
+Bundle-Version: 1.0.2
+Created-By: Apache Maven Bundle Plugin
+Export-Package: com.bosch.cc.atlassian.aiassistant.actions;uses:="com.at
+ lassian.jira.security.request,com.atlassian.jira.web.action";version="1
+ .0.2",com.bosch.cc.atlassian.aiassistant.util;uses:="com.atlassian.jira
+ .issue";version="1.0.2"
+Import-Package: com.atlassian.jira.component,com.atlassian.jira.issue,co
+ m.atlassian.jira.project,com.atlassian.jira.security.request,com.atlass
+ ian.jira.web.action,com.bosch.cc.atlassian.aiassistant.util
+Spring-Context: *
+Tool: Bnd-3.5.0.201709291849
