@@ -2,7 +2,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ai-assist</artifactId>
-    <version>1.0.2</version>
+    <version>2.0.5</version>
     <packaging>atlassian-plugin</packaging>
 
     <name>AI Assist</name>
@@ -24,7 +24,7 @@
     <scm>
         <connection>${scm.connection}</connection>
         <developerConnection>${scm.connection}</developerConnection>
-        <tag>ai-assist-1.0.2</tag>
+        <tag>ai-assist-2.0.5</tag>
     </scm>
 
     <dependencies>
@@ -52,6 +52,12 @@
             <groupId>com.atlassian.plugin</groupId>
             <artifactId>atlassian-spring-scanner-annotation</artifactId>
             <version>2.1.7</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

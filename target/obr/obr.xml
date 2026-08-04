@@ -1,21 +1,26 @@
-<repository lastmodified='20260731124134.112'>
-  <resource id='com.bosch.xc.adda.atlassian.jira.ai-assist/1.0.2' symbolicname='com.bosch.xc.adda.atlassian.jira.ai-assist' presentationname='AI Assist' uri='ai-assist-1.0.2.jar' version='1.0.2'>
+<repository lastmodified='20260804113131.207'>
+  <resource id='com.bosch.xc.adda.atlassian.jira.ai-assist/2.0.5' symbolicname='com.bosch.xc.adda.atlassian.jira.ai-assist' presentationname='AI Assist' uri='ai-assist-2.0.5.jar' version='2.0.5'>
     <description>Jira AI Assistant – natural language Jira operations.</description>
-    <size>73502</size>
+    <size>79687</size>
     <capability name='bundle'>
       <p n='symbolicname' v='com.bosch.xc.adda.atlassian.jira.ai-assist'/>
       <p n='presentationname' v='AI Assist'/>
-      <p n='version' t='version' v='1.0.2'/>
+      <p n='version' t='version' v='2.0.5'/>
       <p n='manifestversion' v='2'/>
     </capability>
     <capability name='package'>
       <p n='package' v='com.bosch.cc.atlassian.aiassistant.actions'/>
-      <p n='version' t='version' v='1.0.2'/>
+      <p n='version' t='version' v='2.0.5'/>
       <p n='uses:' v='com.atlassian.jira.security.request,com.atlassian.jira.web.action'/>
     </capability>
     <capability name='package'>
+      <p n='package' v='com.bosch.cc.atlassian.aiassistant.rest'/>
+      <p n='version' t='version' v='2.0.5'/>
+      <p n='uses:' v='jakarta.ws.rs,jakarta.ws.rs.core'/>
+    </capability>
+    <capability name='package'>
       <p n='package' v='com.bosch.cc.atlassian.aiassistant.util'/>
-      <p n='version' t='version' v='1.0.2'/>
+      <p n='version' t='version' v='2.0.5'/>
       <p n='uses:' v='com.atlassian.jira.issue'/>
     </capability>
     <require name='package' filter='(&amp;(package=com.atlassian.jira.component))' extend='false' multiple='false' optional='false'>Import package com.atlassian.jira.component</require>
@@ -24,5 +29,7 @@
     <require name='package' filter='(&amp;(package=com.atlassian.jira.security.request))' extend='false' multiple='false' optional='false'>Import package com.atlassian.jira.security.request</require>
     <require name='package' filter='(&amp;(package=com.atlassian.jira.web.action))' extend='false' multiple='false' optional='false'>Import package com.atlassian.jira.web.action</require>
     <require name='package' filter='(&amp;(package=com.bosch.cc.atlassian.aiassistant.util))' extend='false' multiple='false' optional='false'>Import package com.bosch.cc.atlassian.aiassistant.util</require>
+    <require name='package' filter='(&amp;(package=jakarta.ws.rs))' extend='false' multiple='false' optional='false'>Import package jakarta.ws.rs</require>
+    <require name='package' filter='(&amp;(package=jakarta.ws.rs.core))' extend='false' multiple='false' optional='false'>Import package jakarta.ws.rs.core</require>
   </resource>
 </repository>

@@ -97,12 +97,145 @@ const JiraAI = (function () {
         }
     }
 
+    // ── AI agent (Google ADK / GPT-4o mini) ────────────────────────────────
+    // Primary path: send the raw message to the server-side agent, which
+    // understands free-form/misspelled requests (e.g. "craete a story for
+    // login page crash") and decides which Jira tool to call. If the agent
+    // service is unreachable, we gracefully fall back to the local regex
+    // intent parser below so the widget keeps working offline.
+
+    async function _callAiAgent(message) {
+        const resp = await _jiraFetch('/rest/aiassistant/1.0/chat', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ message: message, projectKey: _projectKey, issueKey: _issueKey })
+        });
+        if (!resp.ok) {
+            console.warn('[AI Assistant] _callAiAgent() → agent endpoint returned status', resp.status, '- will fall back to local parser');
+            return null;
+        }
+        return await resp.json();
+    }
+
+    function _renderAgentResult(data) {
+        if (!data) return null;
+
+        if (data.status === 'error') {
+            console.warn('[AI Assistant] _renderAgentResult() → agent returned error:', data.error_message);
+            return _errorCard(_escHtml(data.error_message || data.replyText || 'The AI agent could not complete this request.'));
+        }
+
+        switch (data.action) {
+            case 'create_issue':
+                return _successCard(
+                    'Issue Created ✅',
+                    '<a href="' + _ctx + '/browse/' + data.key + '" target="_blank" class="ai-issue-link">' + data.key + '</a>'
+                    + ' — ' + _escHtml(data.summary || ''),
+                    'Type: <strong>' + _escHtml(data.issueType || '') + '</strong> &nbsp;|&nbsp; Project: <strong>' + _escHtml(data.project || '') + '</strong>'
+                );
+            case 'edit_issue':
+                return _successCard(
+                    'Issue Updated ✅',
+                    '<a href="' + _ctx + '/browse/' + data.key + '" target="_blank" class="ai-issue-link">' + data.key + '</a>'
+                    + ' — <strong>' + _escHtml(data.field || '') + '</strong> set to "' + _escHtml(data.value || '') + '"'
+                );
+            case 'list_issues':
+            case 'search_issues':
+                return _renderAgentIssueList(data);
+            case 'summarize_sprint':
+                return _renderAgentSprintSummary(data);
+            case 'chat':
+            default:
+                return _infoCard('AI Assistant', _escHtml(data.replyText || 'Done.'));
+        }
+    }
+
+    function _renderAgentIssueList(data) {
+        const issues = data.issues || [];
+        if (issues.length === 0) {
+            return _infoCard(data.title || 'Issues', 'No issues found matching your criteria.');
+        }
+
+        const rows = issues.map(function (issue) {
+            return '<tr class="ai-issue-row">'
+                +  '<td><a href="' + _ctx + '/browse/' + issue.key + '" target="_blank" class="ai-issue-link">' + issue.key + '</a></td>'
+                +  '<td class="ai-issue-summary-cell" title="' + _escHtml(issue.summary) + '">' + _escHtml(issue.summary) + '</td>'
+                +  '<td><span class="ai-status-badge">' + _escHtml(issue.status) + '</span></td>'
+                +  '<td>' + _escHtml(issue.issuetype) + '</td>'
+                +  '<td>' + _escHtml(issue.assignee) + '</td>'
+                +  '</tr>';
+        }).join('');
+
+        const moreHint = data.total > issues.length
+            ? '<div class="ai-more-hint">Showing ' + issues.length + ' of ' + data.total + ' total issues</div>'
+            : '';
+
+        return (
+            '<div class="ai-issue-list-card">'
+          +   '<div class="ai-list-header">' + _escHtml(data.title || 'Issues') + ' <span class="ai-count-badge">' + data.total + '</span></div>'
+          +   '<table class="ai-issues-table">'
+          +     '<thead><tr><th>Key</th><th>Summary</th><th>Status</th><th>Type</th><th>Assignee</th></tr></thead>'
+          +     '<tbody>' + rows + '</tbody>'
+          +   '</table>'
+          +   moreHint
+          + '</div>'
+        );
+    }
+
+    function _renderAgentSprintSummary(data) {
+        const statusRows = Object.entries(data.statusCounts || {}).map(function ([s, c]) {
+            return '<tr><td>' + _escHtml(s) + '</td><td><strong>' + c + '</strong></td></tr>';
+        }).join('');
+
+        const typeRows = Object.entries(data.typeCounts || {}).map(function ([t, c]) {
+            return '<tr><td>' + _escHtml(t) + '</td><td><strong>' + c + '</strong></td></tr>';
+        }).join('');
+
+        return (
+            '<div class="ai-sprint-card">'
+          +   '<div class="ai-sprint-header">'
+          +     '<span class="ai-sprint-icon">🚀</span>'
+          +     '<div>'
+          +       '<div class="ai-sprint-name">' + _escHtml(data.sprintName) + '</div>'
+          +       '<div class="ai-sprint-dates">' + _escHtml(data.startDate) + ' → ' + _escHtml(data.endDate) + '</div>'
+          +     '</div>'
+          +   '</div>'
+          +   '<div class="ai-progress-bar-container">'
+          +     '<div class="ai-progress-bar" style="width:' + data.progress + '%"></div>'
+          +   '</div>'
+          +   '<div class="ai-progress-label">' + data.done + ' / ' + data.total + ' issues completed (' + data.progress + '%)</div>'
+          +   '<div class="ai-sprint-tables">'
+          +     '<div class="ai-sprint-table-block">'
+          +       '<div class="ai-table-title">By Status</div>'
+          +       '<table class="ai-mini-table"><tbody>' + statusRows + '</tbody></table>'
+          +     '</div>'
+          +     '<div class="ai-sprint-table-block">'
+          +       '<div class="ai-table-title">By Type</div>'
+          +       '<table class="ai-mini-table"><tbody>' + typeRows + '</tbody></table>'
+          +     '</div>'
+          +   '</div>'
+          + '</div>'
+        );
+    }
+
     // ── Intent routing ─────────────────────────────────────────────────────
 
     async function _processMessage(message) {
         console.log('[AI Assistant] _processMessage() → message:', JSON.stringify(message));
+
+        try {
+            const agentData = await _callAiAgent(message);
+            const rendered   = _renderAgentResult(agentData);
+            if (rendered) {
+                console.log('[AI Assistant] _processMessage() → handled by AI agent, action:', agentData && agentData.action);
+                return rendered;
+            }
+        } catch (err) {
+            console.warn('[AI Assistant] _processMessage() → AI agent call failed, falling back to local intent parser:', err);
+        }
+
         const intent = _parseIntent(message);
-        console.log('[AI Assistant] _processMessage() → parsed intent:', JSON.stringify(intent));
+        console.log('[AI Assistant] _processMessage() → parsed intent (fallback):', JSON.stringify(intent));
         switch (intent.type) {
             case 'CREATE_ISSUE':
                 console.log('[AI Assistant] routing → _createIssue()', intent.params);

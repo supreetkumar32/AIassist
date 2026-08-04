@@ -15,7 +15,7 @@
         <link linkId="aiAssistantActionLink">/secure/AiAssistantAction!default.jspa?issueId=${issueId}</link>
     </web-item>
 
-    <web-resource key="ai-assistant-resources-v1" name="AI Assistant Resources">
+    <web-resource key="ai-assistant-resources-v6" name="AI Assistant Resources">
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.auiplugin:aui-form-validation</dependency>
         <resource type="download" name="ai-assistant.css" location="/css/ai-assistant.css"/>
@@ -34,6 +34,11 @@
         </actions>
     </webwork1>
 
+
+    <rest key="ai-assistant-rest" name="AI Assistant REST" path="/aiassistant" version="1.0">
+        <description>Proxies chat requests to the Google ADK AI agent service</description>
+        <package>com.bosch.cc.atlassian.aiassistant.rest</package>
+    </rest>
 
     <velocity-allowlist key="velocity-allowlist-ai-assist">
 

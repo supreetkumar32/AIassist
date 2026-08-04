@@ -1,2 +1,3 @@
+com\bosch\cc\atlassian\aiassistant\rest\AiAgentChatResource.class
 com\bosch\cc\atlassian\aiassistant\actions\AiAssistantAction.class
 com\bosch\cc\atlassian\aiassistant\util\JiraUtil.class
